@@ -62,3 +62,4 @@ crashlytics-build.properties
 # Mac OS Finder files
 *.DS_Store
 WalterGame/.vscode/settings.json
+WalterGame/ProjectSettings/SceneTemplateSettings.json
