@@ -7,8 +7,7 @@ public class PlayerMove : MonoBehaviour
     // Start is called before the first frame update
 
     public float walkVel = 2;
-    public float runMult = 1.3f;
-    public KeyCode runningKey = KeyCode.LeftShift;
+    
     
     private Rigidbody2D rb;
     private Vector2 movement;
@@ -33,15 +32,13 @@ public class PlayerMove : MonoBehaviour
         }
         float speed = walkVel;
         
-        if (Input.GetKey(runningKey)) {
-            speed *= runMult;
+        movement = new Vector2(Input.GetAxis("Horizontal") * speed, Input.GetAxis("Vertical") * speed);
+        if (movement.magnitude > speed) {
+            movement = movement.normalized * speed;
         }
-        movement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        movement = movement.normalized * speed;
         rb.velocity = movement;
         animator.SetFloat("Horizontal", movement.x);
         animator.SetFloat("Vertical", movement.y);
-        Debug.Log((movement.x == 0 && movement.y == 0));
         animator.SetBool("idle", (movement.x == 0 && movement.y == 0));
         animator.SetBool("prevUp", prevUp);
         animator.SetBool("isHor", movement.x != 0);
