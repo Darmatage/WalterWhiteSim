@@ -4,9 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - item_pickup
   - item_pill
   - takes_ingredient
+  - item_meth
+  - item_pickup
+  - item_powder
   layers:
   - Default
   - TransparentFX
