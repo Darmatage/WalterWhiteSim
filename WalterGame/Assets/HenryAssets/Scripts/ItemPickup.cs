@@ -14,9 +14,15 @@ public class ItemPickup : MonoBehaviour
     public GameObject pickupHeld;
     public Transform place;
 
+    public GameObject station;
+    private bool stationInRange = false;
+
     public KeyCode pickupKey = KeyCode.Space;
 
     private bool pressed = false;
+    private bool added = false;
+
+    public KeyCode craftKey = KeyCode.C;
 
     void Start()
     {
@@ -28,43 +34,62 @@ public class ItemPickup : MonoBehaviour
     {
         if (Input.GetKey(pickupKey) && inRange && !carrying && !pressed) {
             carrying = true;
-            holding = itemInRange.transform.GetChild(0).gameObject;
-            holding.SetActive(true);
-            holding.transform.position = hand.position;
-            holding.transform.parent = transform;
-            itemInRange.SetActive(false);
+            
+            itemInRange.transform.position = hand.position;
+            itemInRange.transform.parent = transform;
+            itemInRange.transform.GetChild(0).GetComponent<ItemBounce>().bounce = false;
             pickupHeld = itemInRange;
             pressed = true;
         }
 
-        if (Input.GetKey(pickupKey) && carrying && !pressed) {
-            carrying = false;
-            pickupHeld.transform.position = place.position;
-
-            holding.SetActive(false);
-            holding.transform.position = pickupHeld.transform.position;
-            holding.transform.parent = pickupHeld.transform;
-            pickupHeld.SetActive(true);
+        if (Input.GetKey(pickupKey) && carrying && !pressed && stationInRange) {
+            added = station.GetComponent<Workstation>().addItem(pickupHeld);
+            if (added) {
+                carrying = false;
+                pickupHeld.transform.GetChild(0).GetComponent<ItemBounce>().bounce = true;
+            }
             pressed = true;
         }
 
         if (Input.GetKeyUp(pickupKey)) {
             pressed = false;
         }
+
+        if (stationInRange && Input.GetKeyUp(craftKey)) {
+            
+            station.GetComponent<Workstation>().craft();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log(other.gameObject.name);
-        if (other.gameObject.tag == "item_pickup") {
+
+        Debug.Log(other.gameObject.tag);
+        if (other.gameObject.tag.Substring(0, 4) == "item") {
             inRange = true;
             itemInRange = other.gameObject;
             
         }
+        if (other.gameObject.tag == "takes_ingredient") {
+            SetStationInRange(other.gameObject);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other) {
-        if (other.gameObject.tag == "item_pickup") {
+
+        if (other.gameObject.tag.Substring(0, 4) == "item") {
             inRange = false;
         }
+        if (other.gameObject.tag == "takes_ingredient") {
+            SetStationOutRange();
+        }
+    }
+
+    public void SetStationInRange(GameObject work) {
+        stationInRange = true;
+        station = work;
+    }
+
+    public void SetStationOutRange() {
+        stationInRange = false;
     }
 }

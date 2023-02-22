@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3024172116854537051}
   m_Layer: 0
   m_Name: Pill_Item_Pickup
-  m_TagString: item_pickup
+  m_TagString: item_pill
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
