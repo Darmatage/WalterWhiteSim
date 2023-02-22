@@ -9,9 +9,11 @@ public class Workstation : MonoBehaviour
     public GameObject gameHandler;
     public int maxItemCapacity = 5;
     public Transform[] itemSlots;
+    private GameHandler handler;
     
     void Start()
     {
+        handler = gameHandler.GetComponent<GameHandler>();
         
     }
 
@@ -40,9 +42,9 @@ public class Workstation : MonoBehaviour
     }
 
     public void craft() {
-        string recipe = gameHandler.GetComponent<GameHandler>().getRecipe(items);
+        string recipe = handler.getRecipe(items);
         Debug.Log(recipe);
-        (GameObject, int) check = gameHandler.GetComponent<GameHandler>().checkForRecipe(recipe);
+        (GameObject, int) check = handler.checkForRecipe(recipe);
         if (check.Item2 > -1) {
             while (items.Count > 0) {
                 Destroy(items[0]);
@@ -50,8 +52,13 @@ public class Workstation : MonoBehaviour
             }
             
             GameObject crafted = (GameObject)Instantiate(check.Item1, itemSlots[0].position, Quaternion.identity);
-            crafted.transform.parent = itemSlots[0];
-            items.Add(crafted);
+            if (handler.getID(crafted.tag) == 1) { //if its meth
+                handler.addMeth(check.Item2);
+                Destroy(crafted);
+            } else {
+                crafted.transform.parent = itemSlots[0];
+                items.Add(crafted);
+            }
         } 
     }
 }
