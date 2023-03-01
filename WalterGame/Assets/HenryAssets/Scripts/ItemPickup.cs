@@ -34,6 +34,11 @@ public class ItemPickup : MonoBehaviour
     {
         if (Input.GetKey(pickupKey) && inRange && !carrying && !pressed) {
             carrying = true;
+            if (stationInRange && itemInRange.transform.parent != null){
+                if (itemInRange.transform.parent.parent.gameObject.tag == "takes_ingredient") {
+                    station.GetComponent<Workstation>().take(itemInRange);
+                }
+            }
             
             itemInRange.transform.position = hand.position;
             itemInRange.transform.parent = transform;

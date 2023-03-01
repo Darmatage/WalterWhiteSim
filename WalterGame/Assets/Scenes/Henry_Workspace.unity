@@ -855,12 +855,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredients:
-  - {fileID: 7201070955939938755, guid: 3192f4603ab1fb64784ab111644954fa, type: 3}
   - {fileID: 4952463860538859344, guid: 5f4dbe6f33ff0a84d90e986476ca2e75, type: 3}
+  - {fileID: 7201070955939938755, guid: 3192f4603ab1fb64784ab111644954fa, type: 3}
   - {fileID: 6412107554982670490, guid: 0a360ad27c5c27f4f9f93dc4b1433703, type: 3}
   empty: {fileID: 0}
   meth: 0
   methText: {fileID: 1392290521}
+  workstationSlots: 5
 --- !u!1 &1392290521
 GameObject:
   m_ObjectHideFlags: 0
