@@ -14,7 +14,6 @@ public class Workstation : MonoBehaviour
     void Start()
     {
         handler = gameHandler.GetComponent<GameHandler>();
-        
     }
 
     // Update is called once per frame
@@ -33,18 +32,23 @@ public class Workstation : MonoBehaviour
         return true;
     }
 
+    public void take(GameObject elem) {
+        items.Remove(elem);
+    }
+
     private void updateDisplay() {
         for (int i = 0; i < items.Count; i++) {
-            items[i].SetActive(true);
-            items[i].transform.position = itemSlots[i].position;
-            items[i].transform.parent = itemSlots[i];
+            if (items[i] != null) {
+                items[i].SetActive(true);
+                items[i].transform.position = itemSlots[i].position;
+                items[i].transform.parent = itemSlots[i];
+            }
         }
     }
 
     public void craft() {
-        string recipe = handler.getRecipe(items);
-        Debug.Log(recipe);
-        (GameObject, int) check = handler.checkForRecipe(recipe);
+        (GameObject, int) check = handler.getRecipe(items);
+        
         if (check.Item2 > -1) {
             while (items.Count > 0) {
                 Destroy(items[0]);
@@ -52,7 +56,7 @@ public class Workstation : MonoBehaviour
             }
             
             GameObject crafted = (GameObject)Instantiate(check.Item1, itemSlots[0].position, Quaternion.identity);
-            if (handler.getID(crafted.tag) == 1) { //if its meth
+            if (handler.getID(crafted.tag) == handler.getID("item_meth")) { //if its meth
                 handler.addMeth(check.Item2);
                 Destroy(crafted);
             } else {
