@@ -12,6 +12,7 @@ public class GameHandler : MonoBehaviour
     // Convert a key representing ingredients and amounts to a tuple of a GameObject and a yield
     // recipe is a string with five ids ex -1|1|-1|-1|-1 means input is item id #1 in slot 2, the rest empty 
     private IDictionary<string, (GameObject, int)> recipes = new Dictionary<string, (GameObject, int)>();
+    private IDictionary<string, (GameObject, GameObject, int, int, int)> ovenRecipes = new Dictionary<string, (GameObject, GameObject, int, int, int)>();
     public GameObject empty;
     public int meth = 0;
     public GameObject methText;
@@ -49,8 +50,10 @@ public class GameHandler : MonoBehaviour
 
         Debug.Log(getID("item_pill"));
 
-        generateRecipe(new string[]{"item_pill", "item_pill", "", "", ""}, "item_powder", 1);
-        generateRecipe(new string[]{"item_pill", "item_powder", "", "", ""}, "item_meth", 1);
+        generateTableRecipe(new string[]{"item_pill", "item_pill", "", "", ""}, "item_powder", 1);
+        // generateTableRecipe(new string[]{"item_pill", "item_powder", "", "", ""}, "item_meth", 1);
+        // generateOvenRecipe("item_powder", "item_pill", "item_powder", 1, 5, 2);
+        generateOvenRecipe("item_powder", "item_meth", "item_powder", 1, 5, 2);
         
     }
 
@@ -73,7 +76,7 @@ public class GameHandler : MonoBehaviour
         return false;
     }
 
-    private void generateRecipe(string[] items, string output, int amount) {
+    private void generateTableRecipe(string[] items, string output, int amount) {
         List<int> recipe = new List<int>();
         for (int i = 0; i < items.Length; i++) {
             recipe.Add(getID(items[i]));
@@ -84,6 +87,13 @@ public class GameHandler : MonoBehaviour
                 recipes.Add(r, (ingredients[getID(output)], amount));
             }
         }
+
+    }
+    //takes input item, the item to give if cooked for right amnt of time, item if not right amnt of time, the right amount of time, and the allowable deviation from correct time
+    private void generateOvenRecipe(string input, string wellCooked, string poorlyCooked, int amount, int timer, int window) {
+        string r = "" + getID(input);
+        ovenRecipes.Add(r, (ingredients[getID(wellCooked)], ingredients[getID(poorlyCooked)], timer, window, amount));
+
 
     }
 
@@ -157,6 +167,8 @@ public class GameHandler : MonoBehaviour
 
     }
 
+    
+
     public int getID(string objTag) {
         int result = -1;
         if (ingredientIDs.ContainsKey(objTag)) {
@@ -181,6 +193,16 @@ public class GameHandler : MonoBehaviour
         recipe = recipe.Substring(0, recipe.Length - 1);
         Debug.Log(recipe);
         return checkForRecipe(recipe);
+    }
+
+    public (GameObject, GameObject, int, int, int) getOvenRecipe(GameObject item) {
+        string r = "" + getID(item.tag);
+        (GameObject, GameObject, int, int, int) result = (empty, empty, -1, -1, -1);
+        if (ovenRecipes.ContainsKey(r)) {
+            result = ovenRecipes[r];
+        }
+
+        return result;
     }
 
     public void addMeth(int amount) {

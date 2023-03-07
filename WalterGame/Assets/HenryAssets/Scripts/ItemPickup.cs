@@ -36,7 +36,7 @@ public class ItemPickup : MonoBehaviour
             carrying = true;
             if (stationInRange && itemInRange.transform.parent != null){
                 if (itemInRange.transform.parent.parent.gameObject.tag == "takes_ingredient") {
-                    station.GetComponent<Workstation>().take(itemInRange);
+                    station.SendMessage("take", itemInRange);
                 }
             }
             
@@ -48,7 +48,7 @@ public class ItemPickup : MonoBehaviour
         }
 
         if (Input.GetKey(pickupKey) && carrying && !pressed && stationInRange) {
-            added = station.GetComponent<Workstation>().addItem(pickupHeld);
+            addItem(pickupHeld);
             if (added) {
                 carrying = false;
                 pickupHeld.transform.GetChild(0).GetComponent<ItemBounce>().bounce = true;
@@ -62,7 +62,7 @@ public class ItemPickup : MonoBehaviour
 
         if (stationInRange && Input.GetKeyUp(craftKey)) {
             
-            station.GetComponent<Workstation>().craft();
+            station.SendMessage("craft");
         }
     }
 
@@ -97,4 +97,20 @@ public class ItemPickup : MonoBehaviour
     public void SetStationOutRange() {
         stationInRange = false;
     }
+
+    private bool addItem(GameObject item) {
+        // foreach (MonoBehaviour script in station.GetComponents<MonoBehaviour>()) {
+        //     if (HasMethod(script, "addItem")) {
+        //         return script.addItem(item);
+        //     }
+        // }
+        // return false;
+        return true;
+        
+    }
+
+    public bool HasMethod(object objectToCheck, string methodName) {
+        var type = objectToCheck.GetType();
+        return type.GetMethod(methodName) != null;
+    }    
 }
