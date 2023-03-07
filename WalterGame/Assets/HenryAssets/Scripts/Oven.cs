@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Oven : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Oven : MonoBehaviour
     private GameObject poorlyCooked;
     public GameObject gameHandler;
     private GameHandler handler;
+    public GameObject timeText;
     void Start()
     {
         handler = gameHandler.GetComponent<GameHandler>();
@@ -27,6 +29,7 @@ public class Oven : MonoBehaviour
         if (cooking) {
             timer += Time.deltaTime;
             Debug.Log(timer);
+            timeText.GetComponent<Text>().text = "" + timer;
         }
 
     }
