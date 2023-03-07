@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Henry_Workspace.unity
     guid: 57e71e6bd2e2f014a938fed63c0f60bd
+  - enabled: 1
+    path: Assets/Scenes/Lab_Playable.unity
+    guid: 0412fc9a4e150e6459f1c0aee215c7e0
   m_configObjects: {}

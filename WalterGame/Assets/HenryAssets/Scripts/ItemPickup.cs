@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Reflection;
 
 public class ItemPickup : MonoBehaviour
 {
@@ -48,7 +49,8 @@ public class ItemPickup : MonoBehaviour
         }
 
         if (Input.GetKey(pickupKey) && carrying && !pressed && stationInRange) {
-            addItem(pickupHeld);
+            added = addItem(pickupHeld);
+            Debug.Log(added);
             if (added) {
                 carrying = false;
                 pickupHeld.transform.GetChild(0).GetComponent<ItemBounce>().bounce = true;
@@ -99,18 +101,22 @@ public class ItemPickup : MonoBehaviour
     }
 
     private bool addItem(GameObject item) {
-        // foreach (MonoBehaviour script in station.GetComponents<MonoBehaviour>()) {
-        //     if (HasMethod(script, "addItem")) {
-        //         return script.addItem(item);
-        //     }
-        // }
-        // return false;
-        return true;
+        foreach (MonoBehaviour script in station.GetComponents<MonoBehaviour>()) {
+            return CallMethod(script, "addItem", item);
+        }
+        return false;
         
     }
 
-    public bool HasMethod(object objectToCheck, string methodName) {
+    public bool CallMethod(object objectToCheck, string methodName, GameObject item) {
         var type = objectToCheck.GetType();
-        return type.GetMethod(methodName) != null;
+        Object[] args = new Object[] {item};
+        if (type.GetMethod(methodName) != null){
+            return (bool) type.InvokeMember(methodName,
+                BindingFlags.DeclaredOnly |
+                BindingFlags.Public | BindingFlags.NonPublic |
+                BindingFlags.Instance | BindingFlags.InvokeMethod, null, objectToCheck, args);
+        }
+        return false;
     }    
 }

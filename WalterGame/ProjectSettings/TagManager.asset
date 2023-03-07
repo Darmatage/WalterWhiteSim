@@ -9,6 +9,10 @@ TagManager:
   - item_meth
   - item_pickup
   - item_powder
+  - item_water
+  - item_solution
+  - item_crystal
+  - item_meth_bottle
   layers:
   - Default
   - TransparentFX

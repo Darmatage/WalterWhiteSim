@@ -13,7 +13,7 @@ public class GameHandler : MonoBehaviour
     // recipe is a string with five ids ex -1|1|-1|-1|-1 means input is item id #1 in slot 2, the rest empty 
     private IDictionary<string, (GameObject, int)> recipes = new Dictionary<string, (GameObject, int)>();
     private IDictionary<string, (GameObject, GameObject, int, int, int)> ovenRecipes = new Dictionary<string, (GameObject, GameObject, int, int, int)>();
-    public GameObject empty;
+    private IDictionary<string, (GameObject, int)> distillRecipes = new Dictionary<string, (GameObject, int)>();    public GameObject empty;
     public int meth = 0;
     public GameObject methText;
     private List<List<int>> masks = new List<List<int>>();
@@ -21,25 +21,8 @@ public class GameHandler : MonoBehaviour
     void Start()
     {
         updateText();
-        for (int i = 0; i < workstationSlots - 1; i++) {
-            List<int> m = new List<int>();
-            for (int j = 0; j < workstationSlots; j++) {
-                if (j <= i) {
-                    m.Add(1);
-                } else {
-                    m.Add(0);
-                }
-            }
-            masks = concatList(masks, permute(m), false);
-        }
-        for (int i = 0; i < masks.Count; i++) {
-            List<int> curr = masks[i];
-            string str = "";
-            for (int j = 0; j < curr.Count; j++) {
-                str += curr[j] + ", ";
-            }
-            Debug.Log(str);
-        }
+        
+        
 
         empty = new GameObject();
         for (int i = 0; i < ingredients.Length; i++) {
@@ -51,9 +34,12 @@ public class GameHandler : MonoBehaviour
         Debug.Log(getID("item_pill"));
 
         generateTableRecipe(new string[]{"item_pill", "item_pill", "", "", ""}, "item_powder", 1);
+        generateDistillRecipe(new string[]{"item_powder", "item_water"}, "item_solution", 1);
+        generateDistillRecipe(new string[]{"item_solution", "item_crystal"}, "item_meth_bottle", 1);
+        
         // generateTableRecipe(new string[]{"item_pill", "item_powder", "", "", ""}, "item_meth", 1);
         // generateOvenRecipe("item_powder", "item_pill", "item_powder", 1, 5, 2);
-        generateOvenRecipe("item_powder", "item_meth", "item_powder", 1, 5, 2);
+        generateOvenRecipe("item_meth_bottle", "item_meth", "item_water", 1, 20, 2);
         
     }
 
@@ -92,8 +78,22 @@ public class GameHandler : MonoBehaviour
     //takes input item, the item to give if cooked for right amnt of time, item if not right amnt of time, the right amount of time, and the allowable deviation from correct time
     private void generateOvenRecipe(string input, string wellCooked, string poorlyCooked, int amount, int timer, int window) {
         string r = "" + getID(input);
-        ovenRecipes.Add(r, (ingredients[getID(wellCooked)], ingredients[getID(poorlyCooked)], timer, window, amount));
+        ovenRecipes.Add(r, (ingredients[getID(wellCooked)], ingredients[getID(poorlyCooked)], amount, timer, window));
 
+
+    }
+
+    private void generateDistillRecipe(string[] items, string output, int amount) {
+        List<int> recipe = new List<int>();
+        for (int i = 0; i < items.Length; i++) {
+            recipe.Add(getID(items[i]));
+        }
+        List<string> rs = makeShapeless(recipe);
+        foreach (var r in rs) {
+            if (!distillRecipes.ContainsKey(r)) {
+                distillRecipes.Add(r, (ingredients[getID(output)], amount));
+            }
+        }
 
     }
 
@@ -193,6 +193,26 @@ public class GameHandler : MonoBehaviour
         recipe = recipe.Substring(0, recipe.Length - 1);
         Debug.Log(recipe);
         return checkForRecipe(recipe);
+    }
+
+    public (GameObject, int) getDistillRecipe(List<GameObject> items) {
+        
+        string recipe = "";
+        for (int i = 0; i < 2; i++) {
+            if (i < items.Count) {
+                recipe += getID(items[i].tag) + "|";
+            } else {
+                recipe += "-1|";
+            }
+        }
+
+        recipe = recipe.Substring(0, recipe.Length - 1);
+        Debug.Log(recipe);
+        (GameObject, int) result = (empty, -1);
+        if (distillRecipes.ContainsKey(recipe)) {
+            result = distillRecipes[recipe];
+        }
+        return result;
     }
 
     public (GameObject, GameObject, int, int, int) getOvenRecipe(GameObject item) {

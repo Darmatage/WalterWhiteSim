@@ -13,10 +13,14 @@ public class ItemBounce : MonoBehaviour
     private string spriteName;
     private string removeName;
     public bool bounce = true;
+    private float startX;
+    private float startY;
     void Start()
     {
         art = transform.GetChild(0).gameObject;
         shadow = transform.GetChild(1).gameObject;
+        startX = art.transform.localPosition.x;
+        startY = art.transform.localPosition.y;
     }
 
     // Update is called once per frame
@@ -29,7 +33,7 @@ public class ItemBounce : MonoBehaviour
             removeName = spriteName.Substring(shadowImgName.Length);
             // Debug.Log(removeName == "1");
             currSprite = int.Parse(removeName);
-            art.transform.localPosition = new Vector3(0, ystep * currSprite, 0);
+            art.transform.localPosition = new Vector3(startX, startY + (ystep * currSprite), 0);
         } else {
             shadow.SetActive(false);
         }

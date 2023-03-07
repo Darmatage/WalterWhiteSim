@@ -26,16 +26,21 @@ public class Oven : MonoBehaviour
     {
         if (cooking) {
             timer += Time.deltaTime;
+            Debug.Log(timer);
         }
 
     }
 
     public bool addItem(GameObject item) {
-        if (hasItem) {
+        if (hasItem || cooking) {
             return false;
         } else {
+            
+            item.SetActive(true);
+            item.transform.position = itemSlot.position;
+            item.transform.parent = itemSlot;
             input = item;
-            updateDisplay();
+            hasItem = true;
         }
         return true;
     }
@@ -46,7 +51,8 @@ public class Oven : MonoBehaviour
 
     public void craft() {
         if (hasItem) {
-            (GameObject, GameObject, int, int, int) recipe = handler.getOvenRecipe(input);
+            (GameObject, GameObject, int, int, int) recipe;
+                recipe = handler.getOvenRecipe(input);
             if (recipe.Item3 > -1) {
                 cooking = true;
                 Destroy(input);
@@ -56,9 +62,10 @@ public class Oven : MonoBehaviour
                 cookAmount = recipe.Item3;
                 minGoodTime = recipe.Item4 - recipe.Item5;
                 maxGoodTime = recipe.Item4 + recipe.Item5;
+                
+
             } 
         } else if(cooking) {
-            Debug.Log(minGoodTime + ", " + maxGoodTime + ", " + timer);
             cooking = false;
             GameObject cooked;
             
@@ -76,18 +83,11 @@ public class Oven : MonoBehaviour
                 crafted.transform.parent = itemSlot;
                 input = crafted;
             }
+            timer = 0;
         }
     }
 
     
 
-    private void updateDisplay() {
-        if (hasItem) {
-            input.SetActive(true);
-            input.transform.position = itemSlot.position;
-            input.transform.parent = itemSlot;
-        }
-            
-        
-    }
+    
 }

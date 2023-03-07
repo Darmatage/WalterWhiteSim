@@ -10,6 +10,7 @@ public class Workstation : MonoBehaviour
     public int maxItemCapacity = 5;
     public Transform[] itemSlots;
     private GameHandler handler;
+    public bool isDistill;
     
     void Start()
     {
@@ -47,7 +48,13 @@ public class Workstation : MonoBehaviour
     }
 
     public void craft() {
-        (GameObject, int) check = handler.getRecipe(items);
+        
+        (GameObject, int) check;
+        if (isDistill) {
+            check = handler.getDistillRecipe(items);
+        } else {
+            check = handler.getRecipe(items);
+        }
         
         if (check.Item2 > -1) {
             while (items.Count > 0) {
@@ -56,6 +63,7 @@ public class Workstation : MonoBehaviour
             }
             
             GameObject crafted = (GameObject)Instantiate(check.Item1, itemSlots[0].position, Quaternion.identity);
+            Debug.Log(crafted.name);
             if (handler.getID(crafted.tag) == handler.getID("item_meth")) { //if its meth
                 handler.addMeth(check.Item2);
                 Destroy(crafted);
